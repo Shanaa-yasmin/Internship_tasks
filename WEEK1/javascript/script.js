@@ -370,30 +370,6 @@ const initA11yFeatures = () => {
     }
 };
 
-// ============================================
-// PERFORMANCE: DEBOUNCE UTILITY
-// ============================================
-const debounce = (func, wait = 100) => {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-};
-
-// ============================================
-// PAGE LOAD ANIMATIONS
-// ============================================
-const initPageLoadAnimations = () => {
-    // Add loaded class to body for CSS animations
-    window.addEventListener('load', () => {
-        document.body.classList.add('loaded');
-    });
-};
 
 // ============================================
 // CURRENT PAGE HIGHLIGHT
@@ -416,27 +392,6 @@ const initCurrentPageHighlight = () => {
 };
 
 // ============================================
-// LAZY LOADING IMAGES
-// ============================================
-const initLazyLoading = () => {
-    const images = document.querySelectorAll('img[data-src]');
-    if (images.length === 0) return;
-    
-    const imageObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                img.src = img.dataset.src;
-                img.removeAttribute('data-src');
-                imageObserver.unobserve(img);
-            }
-        });
-    });
-    
-    images.forEach(img => imageObserver.observe(img));
-};
-
-// ============================================
 // INITIALIZE ALL FEATURES
 // ============================================
 const init = () => {
@@ -448,9 +403,6 @@ const init = () => {
     initFormValidation();
     initAOS();
     initA11yFeatures();
-    initPageLoadAnimations();
-    initCurrentPageHighlight();
-    initLazyLoading();
     
     console.log('✨ Portfolio initialized successfully!');
 };
@@ -460,14 +412,4 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
 } else {
     init();
-}
-
-// ============================================
-// EXPORT FOR POTENTIAL MODULE USE
-// ============================================
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        init,
-        debounce
-    };
 }
