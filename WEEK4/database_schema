@@ -1,0 +1,16 @@
+CREATE DATABASE student_db;
+USE student_db;
+
+CREATE TABLE students (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE marks (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    student_id INT,
+    subject VARCHAR(100),
+    score INT,
+    grade VARCHAR(2),
+    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE
+);
