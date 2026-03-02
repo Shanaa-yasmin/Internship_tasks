@@ -62,7 +62,6 @@ user_notes_project/
 │   └── urls.py                  # Notes URL routes
 │
 ├── .env                         # Environment variables (DO NOT COMMIT)
-├── .env.example                 # Example environment variables
 ├── requirements.txt             # Python dependencies
 ├── manage.py                    # Django management script
 └── README.md                    # This file
