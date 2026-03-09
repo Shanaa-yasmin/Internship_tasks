@@ -1,0 +1,1209 @@
+{
+  "info": {
+    "_postman_id": "0f2445d6-5d07-42bb-8251-74be3f672576",
+    "name": "User Notes API",
+    "description": "Complete REST API for User Notes with JWT Authentication, CRUD operations, and error handling tests.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52817302",
+    "_collection_link": "https://go.postman.co/collection/52817302-0f2445d6-5d07-42bb-8251-74be3f672576?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"johny\",\n    \"email\": \"johny@gmail.com\",\n    \"password\": \"Johny@1234\",\n    \"password2\": \"Johny@1234\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/accounts/register/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "accounts",
+                "register",
+                ""
+              ]
+            },
+            "description": "Register a new user. Returns user info and JWT tokens.\nExpected: 201 Created"
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"johny\",\n    \"password\": \"Johny@1234\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/accounts/login/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "accounts",
+                "login",
+                ""
+              ]
+            },
+            "description": "Login with username and password. Returns access and refresh JWT tokens.\nCopy the 'access' token for authenticated requests.\nExpected: 200 OK"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNDI2ODQ5LCJpYXQiOjE3NzI0MjUwNDksImp0aSI6ImJkY2RjZGEwMWIwZjQyNzhhMDk0OWMzYWNjZDYxNjU5IiwidXNlcl9pZCI6IjQifQ.cngTMszoCEwr9WN3Vpq5HWn_n_-Z5TeCQtL5qEwkdlg",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "description": "Paste your access token after 'Bearer '"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/accounts/profile/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "accounts",
+                "profile",
+                ""
+              ]
+            },
+            "description": "Get the authenticated user's profile.\nRequires Bearer token in Authorization header.\nExpected: 200 OK"
+          },
+          "response": []
+        },
+        {
+          "name": "Login - Wrong Password (401)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNDI2ODQ5LCJpYXQiOjE3NzI0MjUwNDksImp0aSI6ImJkY2RjZGEwMWIwZjQyNzhhMDk0OWMzYWNjZDYxNjU5IiwidXNlcl9pZCI6IjQifQ.cngTMszoCEwr9WN3Vpq5HWn_n_-Z5TeCQtL5qEwkdlg",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"johny\",\n    \"password\": \"WrongPassword\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/accounts/login/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "accounts",
+                "login",
+                ""
+              ]
+            },
+            "description": "Attempt login with wrong password.\nExpected: 401 Unauthorized"
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNDI3Mjk3LCJpYXQiOjE3NzI0MjU0OTcsImp0aSI6ImMwNjNlN2Y5MGUzMzRkYmNiNzVkNmJmOTAyNjA1MmI0IiwidXNlcl9pZCI6IjQifQ.Kd14EQdBhqrj5oEPR_Z_tc70Y0rq3AfjBSiyzv4SoVA",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"refresh\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc3MjUxMTg5NywiaWF0IjoxNzcyNDI1NDk3LCJqdGkiOiIyNzgzYTM1ZmEwZDA0MzJhODA2MTRlOWM4ZDRlMjMyNiIsInVzZXJfaWQiOiI0In0.Q8HHWEBtrkxpZHc-E5H4kbuCmY7CnN30qFypi22bB1I\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/accounts/token/refresh/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "accounts",
+                "token",
+                "refresh",
+                ""
+              ]
+            },
+            "description": "Refresh the access token using a valid refresh token.\nExpected: 200 OK with new access token"
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNDI3MzM2LCJpYXQiOjE3NzI0MjU1MzYsImp0aSI6Ijk2YWFiOTgwYzIzMDQ1YmU4ZDFmODVhNDI0YjU5YmNmIiwidXNlcl9pZCI6IjQifQ.McSuqn8i53IdLnn5tG5-PQ9qk8qz1d5b3zrRiOUHAgs",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "description": "Paste your access token after 'Bearer '"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"refresh\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc3MjUxMTkzNiwiaWF0IjoxNzcyNDI1NTM2LCJqdGkiOiIxOTA1YjczNjFiMzg0NThjYmIzZWYyNmI3MjA1Mzc2MSIsInVzZXJfaWQiOiI0In0.TJ4BglqsMhHukS6fPQdtAA39KLgh6O6AnmIER_xge7E\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/accounts/logout/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "accounts",
+                "logout",
+                ""
+              ]
+            },
+            "description": "Logout by blacklisting the refresh token.\nExpected: 200 OK"
+          },
+          "response": []
+        }
+      ],
+      "description": "Authentication endpoints: Register, Login, Profile, Token Refresh, Logout"
+    },
+    {
+      "name": "Notes - CRUD",
+      "item": [
+        {
+          "name": "Create Note 1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "description": "Paste your access token after 'Bearer '"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Meeting Notes\",\n    \"content\": \"Discussed project timeline and deliverables for Q2\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/notes/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "notes",
+                ""
+              ]
+            },
+            "description": "Create a new note. Owner is automatically assigned.\nExpected: 201 Created"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Note 2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "description": "Paste your access token after 'Bearer '"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Grocery List\",\n    \"content\": \"Eggs, Milk, Bread, Butter, Coffee\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/notes/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "notes",
+                ""
+              ]
+            },
+            "description": "Create a second note.\nExpected: 201 Created"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Note 3",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNDI3NTI3LCJpYXQiOjE3NzI0MjU3MjcsImp0aSI6ImRkMDllOGJmYmExYjQ3MmE4NjRlN2E2OWI1ZTYzZjJlIiwidXNlcl9pZCI6IjQifQ.2Ar0WN0doSINPwxLOhO8eSED9XLb3a-y1OAv1NxyUR0",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "description": "Paste your access token after 'Bearer '"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Study Plan\",\n    \"content\": \"Complete Django REST Framework tutorial and JWT authentication\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/notes/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "notes",
+                ""
+              ]
+            },
+            "description": "Create a third note.\nExpected: 201 Created"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Notes",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNDI3NTI3LCJpYXQiOjE3NzI0MjU3MjcsImp0aSI6ImRkMDllOGJmYmExYjQ3MmE4NjRlN2E2OWI1ZTYzZjJlIiwidXNlcl9pZCI6IjQifQ.2Ar0WN0doSINPwxLOhO8eSED9XLb3a-y1OAv1NxyUR0",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "description": "Paste your access token after 'Bearer '"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/notes/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "notes",
+                ""
+              ]
+            },
+            "description": "Get all notes for the authenticated user.\nExpected: 200 OK with array of notes"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Single Note",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNDI3NTI3LCJpYXQiOjE3NzI0MjU3MjcsImp0aSI6ImRkMDllOGJmYmExYjQ3MmE4NjRlN2E2OWI1ZTYzZjJlIiwidXNlcl9pZCI6IjQifQ.2Ar0WN0doSINPwxLOhO8eSED9XLb3a-y1OAv1NxyUR0",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "description": "Paste your access token after 'Bearer '"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/notes/7/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "notes",
+                "7",
+                ""
+              ]
+            },
+            "description": "Get a single note by ID. Only the owner can access.\nExpected: 200 OK"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Note (PUT)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNDI3NTI3LCJpYXQiOjE3NzI0MjU3MjcsImp0aSI6ImRkMDllOGJmYmExYjQ3MmE4NjRlN2E2OWI1ZTYzZjJlIiwidXNlcl9pZCI6IjQifQ.2Ar0WN0doSINPwxLOhO8eSED9XLb3a-y1OAv1NxyUR0",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "description": "Paste your access token after 'Bearer '"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Meeting Notes - Updated\",\n    \"content\": \"Discussed project timeline, budget approval, and team assignments for Q2\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/notes/7/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "notes",
+                "7",
+                ""
+              ]
+            },
+            "description": "Full update of a note. All fields required.\nExpected: 200 OK"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Note (PATCH)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNDI3NTI3LCJpYXQiOjE3NzI0MjU3MjcsImp0aSI6ImRkMDllOGJmYmExYjQ3MmE4NjRlN2E2OWI1ZTYzZjJlIiwidXNlcl9pZCI6IjQifQ.2Ar0WN0doSINPwxLOhO8eSED9XLb3a-y1OAv1NxyUR0",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "description": "Paste your access token after 'Bearer '"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Updated Grocery List\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/notes/6/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "notes",
+                "6",
+                ""
+              ]
+            },
+            "description": "Partial update — only send the fields you want to change.\nExpected: 200 OK"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Note",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "description": "Paste your access token after 'Bearer '"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/notes/3/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "notes",
+                "3",
+                ""
+              ]
+            },
+            "description": "Delete a note by ID. Only the owner can delete.\nExpected: 200 OK"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Notes After Delete",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "description": "Paste your access token after 'Bearer '"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/notes/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "notes",
+                ""
+              ]
+            },
+            "description": "Verify that the deleted note is no longer in the list.\nExpected: 200 OK with 2 notes"
+          },
+          "response": []
+        }
+      ],
+      "description": "CRUD operations for user-specific notes: Create, Read, Update, Delete"
+    },
+    {
+      "name": "Error Cases",
+      "item": [
+        {
+          "name": "Access Without Token (401)",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/notes/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "notes",
+                ""
+              ]
+            },
+            "description": "Attempt to access notes without authentication.\nExpected: 401 Unauthorized"
+          },
+          "response": []
+        },
+        {
+          "name": "Non-Existent Note (404)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "description": "Paste your access token after 'Bearer '"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/notes/999/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "notes",
+                "999",
+                ""
+              ]
+            },
+            "description": "Attempt to access a note that doesn't exist.\nExpected: 404 Not Found"
+          },
+          "response": []
+        },
+        {
+          "name": "Empty Title (400)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNDI3NTI3LCJpYXQiOjE3NzI0MjU3MjcsImp0aSI6ImRkMDllOGJmYmExYjQ3MmE4NjRlN2E2OWI1ZTYzZjJlIiwidXNlcl9pZCI6IjQifQ.2Ar0WN0doSINPwxLOhO8eSED9XLb3a-y1OAv1NxyUR0",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "description": "Paste your access token after 'Bearer '"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"\",\n    \"content\": \"This should fail validation\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/notes/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "notes",
+                ""
+              ]
+            },
+            "description": "Attempt to create a note with empty title.\nExpected: 400 Bad Request"
+          },
+          "response": []
+        },
+        {
+          "name": "Duplicate Registration (400)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNDI3NTI3LCJpYXQiOjE3NzI0MjU3MjcsImp0aSI6ImRkMDllOGJmYmExYjQ3MmE4NjRlN2E2OWI1ZTYzZjJlIiwidXNlcl9pZCI6IjQifQ.2Ar0WN0doSINPwxLOhO8eSED9XLb3a-y1OAv1NxyUR0",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"john\",\n    \"email\": \"john@gmail.com\",\n    \"password\": \"John@1234\",\n    \"password2\": \"John@1234\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/accounts/register/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "accounts",
+                "register",
+                ""
+              ]
+            },
+            "description": "Attempt to register with an already existing username.\nExpected: 400 Bad Request"
+          },
+          "response": []
+        }
+      ],
+      "description": "Error handling test cases: 400, 401, 404 responses"
+    },
+    {
+      "name": "Week 6 - Categories, Tags & Search",
+      "item": [
+        {
+          "name": "Create Category - Study",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Study\"\n}"
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/notes/categories/",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8000",
+              "path": ["api", "notes", "categories", ""]
+            },
+            "description": "Create a new category for the logged-in user.\nExpected: 201 Created"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Category - Work",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Work\"\n}"
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/notes/categories/",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8000",
+              "path": ["api", "notes", "categories", ""]
+            },
+            "description": "Create another category.\nExpected: 201 Created"
+          },
+          "response": []
+        },
+        {
+          "name": "List Categories",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/notes/categories/",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8000",
+              "path": ["api", "notes", "categories", ""]
+            },
+            "description": "List all categories for the logged-in user.\nExpected: 200 OK"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Note with Category & Tags",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"OS Exam\",\n    \"content\": \"prepare disk scheduling algorithms\",\n    \"category_id\": 1,\n    \"tags\": [\"exam\", \"os\", \"important\"]\n}"
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/notes/",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8000",
+              "path": ["api", "notes", ""]
+            },
+            "description": "Create a note with category_id and tags array.\nExpected: 201 Created with category name and tags list in response"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Note with Tags Only",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"DBMS Notes\",\n    \"content\": \"SQL joins and normalization\",\n    \"tags\": [\"exam\", \"database\"]\n}"
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/notes/",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8000",
+              "path": ["api", "notes", ""]
+            },
+            "description": "Create a note with tags but no category.\nExpected: 201 Created"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Note - Work Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Project Meeting\",\n    \"content\": \"Discuss sprint goals and deadlines\",\n    \"category_id\": 2,\n    \"tags\": [\"work\", \"meeting\"]\n}"
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/notes/",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8000",
+              "path": ["api", "notes", ""]
+            },
+            "description": "Create a note in Work category.\nExpected: 201 Created"
+          },
+          "response": []
+        },
+        {
+          "name": "List All Notes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/notes/",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8000",
+              "path": ["api", "notes", ""]
+            },
+            "description": "List all notes with category names and tags.\nExpected: 200 OK"
+          },
+          "response": []
+        },
+        {
+          "name": "Filter Notes by Category",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/notes/?category=Study",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8000",
+              "path": ["api", "notes", ""],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "Study"
+                }
+              ]
+            },
+            "description": "Filter notes by category name.\nExpected: 200 OK with only Study category notes"
+          },
+          "response": []
+        },
+        {
+          "name": "Filter Notes by Tag",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/notes/?tag=exam",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8000",
+              "path": ["api", "notes", ""],
+              "query": [
+                {
+                  "key": "tag",
+                  "value": "exam"
+                }
+              ]
+            },
+            "description": "Filter notes by tag name.\nExpected: 200 OK with only notes containing 'exam' tag"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Notes by Keyword",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/notes/search/?q=disk",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8000",
+              "path": ["api", "notes", "search", ""],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "disk"
+                }
+              ]
+            },
+            "description": "Search notes where title or content contains 'disk'.\nExpected: 200 OK with matching notes"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Notes - No Results",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/notes/search/?q=nonexistent",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8000",
+              "path": ["api", "notes", "search", ""],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "nonexistent"
+                }
+              ]
+            },
+            "description": "Search with keyword that doesn't match any notes.\nExpected: 200 OK with empty results and message"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Note with New Tags",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"OS Exam Updated\",\n    \"content\": \"prepare disk scheduling and memory management\",\n    \"category_id\": 1,\n    \"tags\": [\"exam\", \"os\", \"updated\"]\n}"
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/notes/1/",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8000",
+              "path": ["api", "notes", "1", ""]
+            },
+            "description": "Update a note with new content and tags.\nExpected: 200 OK"
+          },
+          "response": []
+        }
+      ],
+      "description": "Week 6 features: Categories (One-to-Many), Tags (Many-to-Many), Filtering, and Search"
+    }
+  ]
+}
