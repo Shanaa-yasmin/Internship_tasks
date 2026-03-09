@@ -1,0 +1,1442 @@
+{
+  "info": {
+    "_postman_id": "17828c45-6fcf-4c69-bd2f-925213a38767",
+    "name": "User Notes API - Week 6",
+    "description": "Complete REST API for User Notes with JWT Authentication, Categories, Tags, Filtering, and Search features.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52817302",
+    "_collection_link": "https://go.postman.co/collection/52817302-17828c45-6fcf-4c69-bd2f-925213a38767?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"testuser\",\n    \"email\": \"testuser@example.com\",\n    \"password\": \"Test@1234\",\n    \"password2\": \"Test@1234\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/accounts/register/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "accounts",
+                "register",
+                ""
+              ]
+            },
+            "description": "Register a new user. Returns user info and JWT tokens."
+          },
+          "response": []
+        },
+        {
+          "name": "Register User Copy",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"testuser2\",\n    \"email\": \"testuser@example.com\",\n    \"password\": \"Test@1234\",\n    \"password2\": \"Test@1234\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/accounts/register/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "accounts",
+                "register",
+                ""
+              ]
+            },
+            "description": "Register a new user. Returns user info and JWT tokens."
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.access) {",
+                  "    pm.collectionVariables.set('access_token', jsonData.access);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczMDcyMTAxLCJpYXQiOjE3NzMwNzAzMDEsImp0aSI6IjRkM2MwMDYxNTgwMjRkODdiNWU2N2Y2YjI3YjQ0ZGNjIiwidXNlcl9pZCI6IjUifQ.hy-SNZDADJEmO9vSJu0IdKTWDIVODaJCl-5JFFStLOI",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"testuser2\",\n    \"password\": \"Test@1234\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/accounts/login/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "accounts",
+                "login",
+                ""
+              ]
+            },
+            "description": "Login and get JWT tokens. Access token is auto-saved to collection variable."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczMDcyMTQyLCJpYXQiOjE3NzMwNzAzNDIsImp0aSI6IjY2NzlmYWJiYTg2ZTRjZTViMDRiYTUzNTE5YjAwN2YxIiwidXNlcl9pZCI6IjUifQ.tzWYBRdDgIHtXN25nNsrGekEY5wAb6-jAXHlRrNYXyU",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/accounts/profile/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "accounts",
+                "profile",
+                ""
+              ]
+            },
+            "description": "Get authenticated user's profile."
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc3MzE1Njc0MiwiaWF0IjoxNzczMDcwMzQyLCJqdGkiOiJkNWY3ZGUxMGFjNTg0MDI2ODYyNGRjYTY3ZmM4ZDBmOCIsInVzZXJfaWQiOiI1In0.REW14FJ3gK6Wpih9mNXYJAKSweoLAwCEeQLjKvaiLDo",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"refresh\": \"YOUR_REFRESH_TOKEN_HERE\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/accounts/token/refresh/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "accounts",
+                "token",
+                "refresh",
+                ""
+              ]
+            },
+            "description": "Refresh access token using refresh token."
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"refresh\": \"YOUR_REFRESH_TOKEN_HERE\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/accounts/logout/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "accounts",
+                "logout",
+                ""
+              ]
+            },
+            "description": "Logout and blacklist refresh token."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "Create Category - Study",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczMDcyNDQ3LCJpYXQiOjE3NzMwNzA2NDcsImp0aSI6IjEwNGQwZTA3Mjg2YjRiNWJhNWVmZTRhMDg2NTFkMmJmIiwidXNlcl9pZCI6IjUifQ._C_xT5jgRoGmcFgwUkShHSbQ-TkFqAzVR-kvYo74t6o",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Study\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/notes/categories/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                "categories",
+                ""
+              ]
+            },
+            "description": "Create a new category named 'Study'.\nExpected: 201 Created"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Category - Work",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczMDcyNDQ3LCJpYXQiOjE3NzMwNzA2NDcsImp0aSI6IjEwNGQwZTA3Mjg2YjRiNWJhNWVmZTRhMDg2NTFkMmJmIiwidXNlcl9pZCI6IjUifQ._C_xT5jgRoGmcFgwUkShHSbQ-TkFqAzVR-kvYo74t6o",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Work\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/notes/categories/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                "categories",
+                ""
+              ]
+            },
+            "description": "Create a new category named 'Work'.\nExpected: 201 Created"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Category - Personal",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczMDcyNDQ3LCJpYXQiOjE3NzMwNzA2NDcsImp0aSI6IjEwNGQwZTA3Mjg2YjRiNWJhNWVmZTRhMDg2NTFkMmJmIiwidXNlcl9pZCI6IjUifQ._C_xT5jgRoGmcFgwUkShHSbQ-TkFqAzVR-kvYo74t6o",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Personal\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/notes/categories/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                "categories",
+                ""
+              ]
+            },
+            "description": "Create a new category named 'Personal'.\nExpected: 201 Created"
+          },
+          "response": []
+        },
+        {
+          "name": "List All Categories",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczMDcyNDQ3LCJpYXQiOjE3NzMwNzA2NDcsImp0aSI6IjEwNGQwZTA3Mjg2YjRiNWJhNWVmZTRhMDg2NTFkMmJmIiwidXNlcl9pZCI6IjUifQ._C_xT5jgRoGmcFgwUkShHSbQ-TkFqAzVR-kvYo74t6o",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/notes/categories/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                "categories",
+                ""
+              ]
+            },
+            "description": "List all categories for the logged-in user.\nExpected: 200 OK with array of categories"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Category - Empty Name (400)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczMDcyNDQ3LCJpYXQiOjE3NzMwNzA2NDcsImp0aSI6IjEwNGQwZTA3Mjg2YjRiNWJhNWVmZTRhMDg2NTFkMmJmIiwidXNlcl9pZCI6IjUifQ._C_xT5jgRoGmcFgwUkShHSbQ-TkFqAzVR-kvYo74t6o",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/notes/categories/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                "categories",
+                ""
+              ]
+            },
+            "description": "Try to create category with empty name.\nExpected: 400 Bad Request"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Category - No Auth (401)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczMDcyNDQ3LCJpYXQiOjE3NzMwNzA2NDcsImp0aSI6IjEwNGQwZTA3Mjg2YjRiNWJhNWVmZTRhMDg2NTFkMmJmIiwidXNlcl9pZCI6IjUifQ._C_xT5jgRoGmcFgwUkShHSbQ-TkFqAzVR-kvYo74t6o",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Test\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/notes/categories/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                "categories",
+                ""
+              ]
+            },
+            "description": "Try to create category without authentication.\nExpected: 401 Unauthorized"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Notes with Category & Tags",
+      "item": [
+        {
+          "name": "Create Note with Category and Tags",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczMDcyNDQ3LCJpYXQiOjE3NzMwNzA2NDcsImp0aSI6IjEwNGQwZTA3Mjg2YjRiNWJhNWVmZTRhMDg2NTFkMmJmIiwidXNlcl9pZCI6IjUifQ._C_xT5jgRoGmcFgwUkShHSbQ-TkFqAzVR-kvYo74t6o",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"OS Exam\",\n    \"content\": \"Prepare disk scheduling algorithms\",\n    \"category_id\": 1,\n    \"tag_names\": [\"exam\", \"os\", \"important\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/notes/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                ""
+              ]
+            },
+            "description": "Create a note with category (ID=1) and multiple tags.\nExpected: 201 Created with category name and tags array in response"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Note - DBMS Study",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczMDcyNDQ3LCJpYXQiOjE3NzMwNzA2NDcsImp0aSI6IjEwNGQwZTA3Mjg2YjRiNWJhNWVmZTRhMDg2NTFkMmJmIiwidXNlcl9pZCI6IjUifQ._C_xT5jgRoGmcFgwUkShHSbQ-TkFqAzVR-kvYo74t6o",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"DBMS Normalization\",\n    \"content\": \"Study 1NF, 2NF, 3NF, BCNF for exam\",\n    \"category_id\": 1,\n    \"tag_names\": [\"exam\", \"dbms\", \"theory\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/notes/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                ""
+              ]
+            },
+            "description": "Create a DBMS study note in Study category.\nExpected: 201 Created"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Note - Without Category",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Quick Reminder\",\n    \"content\": \"Buy groceries on the way home\",\n    \"tag_names\": [\"reminder\", \"personal\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/notes/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                ""
+              ]
+            },
+            "description": "Create a note without category (category will be null).\nExpected: 201 Created"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Note - Without Tags",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczMDcyNDQ3LCJpYXQiOjE3NzMwNzA2NDcsImp0aSI6IjEwNGQwZTA3Mjg2YjRiNWJhNWVmZTRhMDg2NTFkMmJmIiwidXNlcl9pZCI6IjUifQ._C_xT5jgRoGmcFgwUkShHSbQ-TkFqAzVR-kvYo74t6o",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Simple Note\",\n    \"content\": \"Just a simple note without tags\",\n    \"category_id\": 3\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/notes/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                ""
+              ]
+            },
+            "description": "Create a note with category but no tags.\nExpected: 201 Created"
+          },
+          "response": []
+        },
+        {
+          "name": "List All Notes",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczMDcyNDQ3LCJpYXQiOjE3NzMwNzA2NDcsImp0aSI6IjEwNGQwZTA3Mjg2YjRiNWJhNWVmZTRhMDg2NTFkMmJmIiwidXNlcl9pZCI6IjUifQ._C_xT5jgRoGmcFgwUkShHSbQ-TkFqAzVR-kvYo74t6o",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/notes/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                ""
+              ]
+            },
+            "description": "List all notes for logged-in user.\nResponse includes category name and tags array.\nExpected: 200 OK"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Single Note",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczMDcyNDQ3LCJpYXQiOjE3NzMwNzA2NDcsImp0aSI6IjEwNGQwZTA3Mjg2YjRiNWJhNWVmZTRhMDg2NTFkMmJmIiwidXNlcl9pZCI6IjUifQ._C_xT5jgRoGmcFgwUkShHSbQ-TkFqAzVR-kvYo74t6o",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/notes/12/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                "12",
+                ""
+              ]
+            },
+            "description": "Get a specific note by ID.\nExpected: 200 OK with category and tags"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Note - Full Update (PUT)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"OS Exam - Updated\",\n    \"content\": \"Prepare disk scheduling algorithms and memory management\",\n    \"category_id\": 1,\n    \"tag_names\": [\"exam\", \"os\", \"important\", \"updated\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/notes/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                "1",
+                ""
+              ]
+            },
+            "description": "Full update of a note with new tags.\nExpected: 200 OK"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Note - Partial Update (PATCH)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"tag_names\": [\"exam\", \"os\", \"priority\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/notes/13/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                "13",
+                ""
+              ]
+            },
+            "description": "Partial update - only update tags.\nExpected: 200 OK"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Note - Change Category",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczMDc0NTY3LCJpYXQiOjE3NzMwNzI3NjcsImp0aSI6ImNhNjU4NGMxMjU2ZjQ2NjVhZDUyMGMwOTBmZDFjMmY1IiwidXNlcl9pZCI6IjUifQ.0pyTql6B9Fn5yRAazgyrcUWCw8ndvcwHDvj6CnwK3us",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"category_id\": 2\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/notes/13/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                "13",
+                ""
+              ]
+            },
+            "description": "Change note's category.\nExpected: 200 OK"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Filtering",
+      "item": [
+        {
+          "name": "Filter Notes by Category",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczMDc0NTY3LCJpYXQiOjE3NzMwNzI3NjcsImp0aSI6ImNhNjU4NGMxMjU2ZjQ2NjVhZDUyMGMwOTBmZDFjMmY1IiwidXNlcl9pZCI6IjUifQ.0pyTql6B9Fn5yRAazgyrcUWCw8ndvcwHDvj6CnwK3us",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/notes/?category=Study",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "Study"
+                }
+              ]
+            },
+            "description": "Filter notes by category name.\nReturns all notes in 'Study' category.\nExpected: 200 OK"
+          },
+          "response": []
+        },
+        {
+          "name": "Filter Notes by Category - Work",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczMDc0NTY3LCJpYXQiOjE3NzMwNzI3NjcsImp0aSI6ImNhNjU4NGMxMjU2ZjQ2NjVhZDUyMGMwOTBmZDFjMmY1IiwidXNlcl9pZCI6IjUifQ.0pyTql6B9Fn5yRAazgyrcUWCw8ndvcwHDvj6CnwK3us",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/notes/?category=Work",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "Work"
+                }
+              ]
+            },
+            "description": "Filter notes by 'Work' category.\nExpected: 200 OK"
+          },
+          "response": []
+        },
+        {
+          "name": "Filter Notes by Tag",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczMDc0NTY3LCJpYXQiOjE3NzMwNzI3NjcsImp0aSI6ImNhNjU4NGMxMjU2ZjQ2NjVhZDUyMGMwOTBmZDFjMmY1IiwidXNlcl9pZCI6IjUifQ.0pyTql6B9Fn5yRAazgyrcUWCw8ndvcwHDvj6CnwK3us",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/notes/?tag=exam",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "tag",
+                  "value": "exam"
+                }
+              ]
+            },
+            "description": "Filter notes by tag name.\nReturns all notes with 'exam' tag.\nExpected: 200 OK"
+          },
+          "response": []
+        },
+        {
+          "name": "Filter Notes by Tag - important",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczMDc0NTY3LCJpYXQiOjE3NzMwNzI3NjcsImp0aSI6ImNhNjU4NGMxMjU2ZjQ2NjVhZDUyMGMwOTBmZDFjMmY1IiwidXNlcl9pZCI6IjUifQ.0pyTql6B9Fn5yRAazgyrcUWCw8ndvcwHDvj6CnwK3us",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/notes/?tag=important",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "tag",
+                  "value": "important"
+                }
+              ]
+            },
+            "description": "Filter notes with 'important' tag.\nExpected: 200 OK"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Search",
+      "item": [
+        {
+          "name": "Search Notes - by Title",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczMDc0NTY3LCJpYXQiOjE3NzMwNzI3NjcsImp0aSI6ImNhNjU4NGMxMjU2ZjQ2NjVhZDUyMGMwOTBmZDFjMmY1IiwidXNlcl9pZCI6IjUifQ.0pyTql6B9Fn5yRAazgyrcUWCw8ndvcwHDvj6CnwK3us",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/notes/search/?q=OS",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                "search",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "OS"
+                }
+              ]
+            },
+            "description": "Search notes where title contains 'OS'.\nUses Q objects for OR query on title and content.\nExpected: 200 OK with matching notes"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Notes - by Content",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/notes/search/?q=algorithm",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                "search",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "algorithm"
+                }
+              ]
+            },
+            "description": "Search notes where content contains 'algorithm'.\nExpected: 200 OK with matching notes"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Notes - Exam",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/notes/search/?q=exam",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                "search",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "exam"
+                }
+              ]
+            },
+            "description": "Search notes for 'exam' keyword.\nExpected: 200 OK"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Notes - Meeting",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/notes/search/?q=meeting",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                "search",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "meeting"
+                }
+              ]
+            },
+            "description": "Search for notes with 'meeting' keyword.\nExpected: 200 OK"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Notes - No Results",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/notes/search/?q=xyznonexistent",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                "search",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "xyznonexistent"
+                }
+              ]
+            },
+            "description": "Search with no matching results.\nExpected: 200 OK with empty results array"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Notes - Missing Query (400)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/notes/search/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                "search",
+                ""
+              ]
+            },
+            "description": "Search without 'q' parameter.\nExpected: 400 Bad Request"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Notes - Empty Query (400)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/notes/search/?q=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                "search",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Search with empty query string.\nExpected: 400 Bad Request"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Notes - No Auth (401)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/notes/search/?q=test",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                "search",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "test"
+                }
+              ]
+            },
+            "description": "Search without authentication.\nExpected: 401 Unauthorized"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Error Cases",
+      "item": [
+        {
+          "name": "Create Note - No Auth (401)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Test Note\",\n    \"content\": \"Test content\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/notes/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                ""
+              ]
+            },
+            "description": "Try to create note without authentication.\nExpected: 401 Unauthorized"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Note - Empty Title (400)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"\",\n    \"content\": \"Some content\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/notes/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                ""
+              ]
+            },
+            "description": "Try to create note with empty title.\nExpected: 400 Bad Request"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Note - Invalid Category ID (400)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Test Note\",\n    \"content\": \"Test content\",\n    \"category_id\": 9999\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/notes/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                ""
+              ]
+            },
+            "description": "Try to create note with non-existent category ID.\nExpected: 400 Bad Request"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Note - Not Found (404)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/notes/9999/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                "9999",
+                ""
+              ]
+            },
+            "description": "Try to get non-existent note.\nExpected: 404 Not Found"
+          },
+          "response": []
+        },
+        {
+          "name": "List Notes - Expired Token (401)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "expired.token.here",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/notes/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notes",
+                ""
+              ]
+            },
+            "description": "Try to list notes with expired/invalid token.\nExpected: 401 Unauthorized"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
