@@ -1,0 +1,47 @@
+{
+  "info": {
+    "name": "Notes Share Links API",
+    "_postman_id": "8c5e6e7a-1f2b-4f2a-8b3b-6f7c1b2a9d0e",
+    "description": "Share link creation and public access for notes.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://127.0.0.1:8000" },
+    { "key": "token", "value": "<JWT_ACCESS_TOKEN>" },
+    { "key": "note_id", "value": "12" },
+    { "key": "share_token", "value": "<SHARE_TOKEN>" }
+  ],
+  "item": [
+    {
+      "name": "Create Share Link",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
+          { "key": "Content-Type", "value": "application/json", "type": "text" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"expires_at\": \"2026-03-20T12:00:00Z\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/notes/{{note_id}}/share/",
+          "host": ["{{base_url}}"],
+          "path": ["api", "notes", "{{note_id}}", "share", ""]
+        }
+      }
+    },
+    {
+      "name": "Public Access by Token",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/notes/share/{{share_token}}/",
+          "host": ["{{base_url}}"],
+          "path": ["api", "notes", "share", "{{share_token}}", ""]
+        }
+      }
+    }
+  ]
+}
