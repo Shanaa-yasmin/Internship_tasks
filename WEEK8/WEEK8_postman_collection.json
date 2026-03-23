@@ -1,0 +1,183 @@
+{
+  "info": {
+    "name": "DRF Auth System",
+    "description": "JWT + OTP authentication with role-based access",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://127.0.0.1:8000" },
+    { "key": "access_token", "value": "" },
+    { "key": "refresh_token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "1. Register User",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{base_url}}/api/auth/register/",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"john@example.com\",\n  \"full_name\": \"John Doe\",\n  \"password\": \"securepass123\",\n  \"confirm_password\": \"securepass123\",\n  \"role\": \"user\"\n}"
+        }
+      },
+      "response": [
+        {
+          "name": "201 Created",
+          "status": "Created",
+          "code": 201,
+          "body": "{\n  \"message\": \"Registration successful.\",\n  \"user\": {\n    \"id\": 1,\n    \"email\": \"john@example.com\",\n    \"full_name\": \"John Doe\",\n    \"role\": \"user\",\n    \"date_joined\": \"2024-01-01T00:00:00Z\"\n  }\n}"
+        }
+      ]
+    },
+    {
+      "name": "2. Register Admin",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{base_url}}/api/auth/register/",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@example.com\",\n  \"full_name\": \"Admin User\",\n  \"password\": \"adminpass123\",\n  \"confirm_password\": \"adminpass123\",\n  \"role\": \"admin\"\n}"
+        }
+      }
+    },
+    {
+      "name": "3. Login (sends OTP)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{base_url}}/api/auth/login/",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"securepass123\"\n}"
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "status": "OK",
+          "code": 200,
+          "body": "{\n  \"message\": \"OTP sent to john@example.com. Valid for 5 minutes.\"\n}"
+        },
+        {
+          "name": "403 Locked",
+          "status": "Forbidden",
+          "code": 403,
+          "body": "{\n  \"error\": \"Account is temporarily locked due to multiple failed attempts. Please try again after 10 minutes.\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "4. Verify OTP",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "if (res.access_token) {",
+              "  pm.collectionVariables.set('access_token', res.access_token);",
+              "  pm.collectionVariables.set('refresh_token', res.refresh_token);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{base_url}}/api/auth/verify-otp/",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"john@example.com\",\n  \"otp\": \"123456\"\n}"
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "status": "OK",
+          "code": 200,
+          "body": "{\n  \"message\": \"Login successful.\",\n  \"access_token\": \"eyJ...\",\n  \"refresh_token\": \"eyJ...\",\n  \"user\": {\n    \"id\": 1,\n    \"email\": \"john@example.com\",\n    \"full_name\": \"John Doe\",\n    \"role\": \"user\",\n    \"date_joined\": \"2024-01-01T00:00:00Z\"\n  }\n}"
+        },
+        {
+          "name": "400 Expired OTP",
+          "status": "Bad Request",
+          "code": 400,
+          "body": "{\n  \"error\": \"OTP has expired. Please login again to receive a new OTP.\"\n}"
+        },
+        {
+          "name": "400 Invalid OTP",
+          "status": "Bad Request",
+          "code": 400,
+          "body": "{\n  \"error\": \"Invalid OTP.\",\n  \"attempts_remaining\": 3\n}"
+        }
+      ]
+    },
+    {
+      "name": "5. Get Profile",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "url": "{{base_url}}/api/auth/profile/"
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "status": "OK",
+          "code": 200,
+          "body": "{\n  \"id\": 1,\n  \"email\": \"john@example.com\",\n  \"full_name\": \"John Doe\",\n  \"role\": \"user\",\n  \"date_joined\": \"2024-01-01T00:00:00Z\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "6. Admin Dashboard",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "url": "{{base_url}}/api/admin/dashboard/"
+      },
+      "response": [
+        {
+          "name": "200 OK (admin token)",
+          "status": "OK",
+          "code": 200,
+          "body": "{\n  \"message\": \"Admin dashboard\",\n  \"total_users\": 2,\n  \"users\": [...]\n}"
+        },
+        {
+          "name": "403 Forbidden (non-admin token)",
+          "status": "Forbidden",
+          "code": 403,
+          "body": "{\n  \"error\": \"Access denied. Admin role required.\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "7. Refresh Token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "if (res.access) pm.collectionVariables.set('access_token', res.access);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{base_url}}/api/auth/token/refresh/",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"refresh\": \"{{refresh_token}}\"\n}"
+        }
+      }
+    }
+  ]
+}
