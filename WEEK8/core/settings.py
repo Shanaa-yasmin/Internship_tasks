@@ -1,10 +1,9 @@
-#EMAIL_HOST_USER = os.environ.get('GMAIL_USER')
-#EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_APP_PASSWORD')
-#DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
 from pathlib import Path
 import os
 from datetime import timedelta
+from dotenv import load_dotenv
+
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -103,6 +102,9 @@ REST_FRAMEWORK = {
 # SSL certificate verification is handled directly in views.py using smtplib
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = 'shanshana.kt@gmail.com'
-EMAIL_HOST_PASSWORD = 'ppro tbzk xqfg smwf'
-DEFAULT_FROM_EMAIL = 'shanshana.kt@gmail.com'
+#EMAIL_HOST_USER = 'shanshana.kt@gmail.com'
+#EMAIL_HOST_PASSWORD = 'ppro tbzk xqfg smwf'
+#DEFAULT_FROM_EMAIL = 'shanshana.kt@gmail.com'
+EMAIL_HOST_USER = os.environ.get('GMAIL_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_APP_PASSWORD')
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
