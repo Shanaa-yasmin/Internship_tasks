@@ -1,18 +1,24 @@
 """
 Django Settings for E-Commerce API Project
+Secrets are loaded from .env — never hardcode credentials here.
 """
 
 from pathlib import Path
 from datetime import timedelta
+import os
+from dotenv import load_dotenv
+
+# Load .env file from the project root (same folder as manage.py)
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ─────────────────────────────────────────────
-# SECURITY
+# SECURITY — all values come from .env
 # ─────────────────────────────────────────────
-SECRET_KEY = 'django-insecure-change-this-in-production-use-env-variable'
-DEBUG = True
-ALLOWED_HOSTS = ['*']
+SECRET_KEY    = os.getenv('SECRET_KEY', 'fallback-secret-key-change-in-production')
+DEBUG         = os.getenv('DEBUG', 'True') == 'True'
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 # ─────────────────────────────────────────────
 # INSTALLED APPS
@@ -24,19 +30,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    # Third-party
     'rest_framework',
     'rest_framework_simplejwt',
     'django_filters',
-
-    # Local
     'api',
 ]
 
-# ─────────────────────────────────────────────
-# MIDDLEWARE
-# ─────────────────────────────────────────────
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -68,30 +67,23 @@ TEMPLATES = [
 WSGI_APPLICATION = 'ecommerce_project.wsgi.application'
 
 # ─────────────────────────────────────────────
-# DATABASE — SQLite (default); swap to PostgreSQL below
+# DATABASE — all credentials from .env
 # ─────────────────────────────────────────────
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE':   os.getenv('DB_ENGINE',   'django.db.backends.mysql'),
+        'NAME':     os.getenv('DB_NAME',     'ecommerce_db'),
+        'USER':     os.getenv('DB_USER',     'root'),
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),
+        'HOST':     os.getenv('DB_HOST',     'localhost'),
+        'PORT':     os.getenv('DB_PORT',     '3306'),
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
-# --- PostgreSQL (uncomment to use) ---
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'ecommerce_db',
-#         'USER': 'postgres',
-#         'PASSWORD': 'your_password',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
-#     }
-# }
-
-# ─────────────────────────────────────────────
-# AUTH
-# ─────────────────────────────────────────────
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -99,13 +91,10 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# ─────────────────────────────────────────────
-# INTERNATIONALISATION
-# ─────────────────────────────────────────────
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
-USE_I18N = True
-USE_TZ = True
+TIME_ZONE     = 'UTC'
+USE_I18N      = True
+USE_TZ        = True
 
 STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -114,25 +103,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # DJANGO REST FRAMEWORK
 # ─────────────────────────────────────────────
 REST_FRAMEWORK = {
-    # Authentication
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
-
-    # Permissions — authenticated by default; relax on individual views as needed
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ),
-
-    # Filtering
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
     ],
-
-    # Pagination — 10 items per page by default
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
 }
@@ -141,9 +123,9 @@ REST_FRAMEWORK = {
 # JWT SETTINGS
 # ─────────────────────────────────────────────
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(hours=2),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
-    'ROTATE_REFRESH_TOKENS': True,
+    'ACCESS_TOKEN_LIFETIME':    timedelta(hours=2),
+    'REFRESH_TOKEN_LIFETIME':   timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS':    True,
     'BLACKLIST_AFTER_ROTATION': True,
-    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_TYPES':        ('Bearer',),
 }
