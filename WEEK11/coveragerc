@@ -1,0 +1,18 @@
+# .coveragerc — place this in your project root
+
+[run]
+source = api
+omit =
+    */migrations/*
+    */tests.py
+    */admin.py
+    */apps.py
+    manage.py
+
+[report]
+show_missing = True
+skip_covered = False
+fail_under = 80
+
+[html]
+directory = htmlcov
