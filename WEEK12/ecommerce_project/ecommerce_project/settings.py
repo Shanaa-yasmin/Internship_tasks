@@ -1,7 +1,7 @@
 """
 Django Settings for E-Commerce API Project
+Supports dev (local MySQL) and prod (PythonAnywhere MySQL) environments.
 Secrets are loaded from .env — never hardcode credentials here.
-Supports dev (local MySQL) and prod (Railway MySQL) environments.
 """
 
 from pathlib import Path
@@ -16,7 +16,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ─────────────────────────────────────────────
 # ENVIRONMENT
 # ─────────────────────────────────────────────
-ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')
+ENVIRONMENT   = os.getenv('ENVIRONMENT', 'development')
 IS_PRODUCTION = ENVIRONMENT == 'production'
 
 # ─────────────────────────────────────────────
@@ -45,8 +45,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',        # ← serves static files in prod
-    'corsheaders.middleware.CorsMiddleware',             # ← CORS
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -77,16 +77,18 @@ WSGI_APPLICATION = 'ecommerce_project.wsgi.application'
 
 # ─────────────────────────────────────────────
 # DATABASE
-# Railway provides MYSQL_URL or individual vars
+# PythonAnywhere MySQL:
+#   HOST : yourusername.mysql.pythonanywhere-services.com
+#   NAME : yourusername$ecommerce_db
 # ─────────────────────────────────────────────
 DATABASES = {
     'default': {
         'ENGINE':   'django.db.backends.mysql',
-        'NAME':     os.getenv('MYSQL_DATABASE', os.getenv('DB_NAME',     'ecommerce_db')),
-        'USER':     os.getenv('MYSQL_USER',     os.getenv('DB_USER',     'root')),
-        'PASSWORD': os.getenv('MYSQL_PASSWORD', os.getenv('DB_PASSWORD', '')),
-        'HOST':     os.getenv('MYSQL_HOST',     os.getenv('DB_HOST',     'localhost')),
-        'PORT':     os.getenv('MYSQL_PORT',     os.getenv('DB_PORT',     '3306')),
+        'NAME':     os.getenv('DB_NAME',     'ecommerce_db'),
+        'USER':     os.getenv('DB_USER',     'root'),
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),
+        'HOST':     os.getenv('DB_HOST',     'localhost'),
+        'PORT':     os.getenv('DB_PORT',     '3306'),
         'OPTIONS': {
             'charset': 'utf8mb4',
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
@@ -107,7 +109,7 @@ USE_I18N      = True
 USE_TZ        = True
 
 # ─────────────────────────────────────────────
-# STATIC FILES — WhiteNoise serves in production
+# STATIC FILES
 # ─────────────────────────────────────────────
 STATIC_URL  = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
@@ -135,8 +137,7 @@ CORS_ALLOWED_ORIGINS = os.getenv(
     'CORS_ALLOWED_ORIGINS',
     'http://localhost:3000,http://127.0.0.1:3000'
 ).split(',')
-
-CORS_ALLOW_ALL_ORIGINS = not IS_PRODUCTION   # open in dev, restricted in prod
+CORS_ALLOW_ALL_ORIGINS = not IS_PRODUCTION
 
 # ─────────────────────────────────────────────
 # DJANGO REST FRAMEWORK
@@ -170,13 +171,12 @@ SIMPLE_JWT = {
 }
 
 # ─────────────────────────────────────────────
-# PRODUCTION SECURITY (only when IS_PRODUCTION)
+# PRODUCTION SECURITY
 # ─────────────────────────────────────────────
 if IS_PRODUCTION:
     SECURE_PROXY_SSL_HEADER        = ('HTTP_X_FORWARDED_PROTO', 'https')
-    SECURE_SSL_REDIRECT            = True
+    SECURE_SSL_REDIRECT            = False   # PythonAnywhere handles SSL
     SESSION_COOKIE_SECURE          = True
     CSRF_COOKIE_SECURE             = True
     SECURE_HSTS_SECONDS            = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD            = True
