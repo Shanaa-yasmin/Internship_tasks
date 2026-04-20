@@ -84,14 +84,17 @@ WSGI_APPLICATION = 'ecommerce_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE':   'django.db.backends.mysql',
-        'NAME':     os.getenv('DB_NAME',     'ecommerce_db'),
-        'USER':     os.getenv('DB_USER',     'root'),
+        'NAME':     os.getenv('DB_NAME',     'defaultdb'),
+        'USER':     os.getenv('DB_USER',     'avnadmin'),
         'PASSWORD': os.getenv('DB_PASSWORD', ''),
         'HOST':     os.getenv('DB_HOST',     'localhost'),
         'PORT':     os.getenv('DB_PORT',     '3306'),
         'OPTIONS': {
             'charset': 'utf8mb4',
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            'ssl': {
+                'ca': os.path.join(BASE_DIR, 'ca.pem'),
+            },
         },
     }
 }
