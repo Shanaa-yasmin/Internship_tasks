@@ -1,0 +1,8 @@
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap");
+
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-font-smoothing: antialiased; }
+body { background: #f9f8f6; color: #1a1a1a; font-family: "Geist", "DM Sans", sans-serif; min-height: 100vh; }
+button { cursor: pointer; font-family: inherit; }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: #e0e0e0; border-radius: 4px; }

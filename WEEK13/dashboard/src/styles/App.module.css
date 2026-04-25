@@ -1,0 +1,240 @@
+.root {
+  display: flex;
+  min-height: 100vh;
+  background: #f9f8f6;
+  font-family: "Geist", sans-serif;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 200px;
+  min-height: 100vh;
+  background: #fff;
+  border-right: 1px solid #ebebeb;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  flex-shrink: 0;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 4px 28px;
+}
+
+.logoDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #1a1a1a;
+  flex-shrink: 0;
+}
+
+.logoText {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #1a1a1a;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: none;
+  border: none;
+  color: #8a8a8a;
+  font-size: 13px;
+  font-weight: 400;
+  transition: all 0.15s;
+  width: 100%;
+  text-align: left;
+}
+
+.navItem:hover {
+  background: #f5f5f3;
+  color: #1a1a1a;
+}
+
+.navActive {
+  background: #f0efec !important;
+  color: #1a1a1a !important;
+  font-weight: 500;
+}
+
+.navIcon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  opacity: 0.45;
+}
+
+.navActive .navIcon {
+  opacity: 1;
+}
+
+.sidebarFooter {
+  padding-top: 16px;
+  border-top: 1px solid #ebebeb;
+}
+
+.userChip {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 6px;
+  border-radius: 8px;
+  transition: background 0.15s;
+  cursor: pointer;
+}
+
+.userChip:hover {
+  background: #f5f5f3;
+}
+
+.userAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #1a1a1a;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.userName {
+  font-size: 12px;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+.userRole {
+  font-size: 11px;
+  color: #aaa;
+  font-family: "Geist Mono", monospace;
+}
+
+/* Main */
+.main {
+  flex: 1;
+  padding: 32px 28px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+/* Top Bar */
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.pageTitle {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: #1a1a1a;
+  margin-bottom: 3px;
+}
+
+.pageDate {
+  font-size: 12px;
+  color: #aaa;
+  font-family: "Geist Mono", monospace;
+}
+
+.topActions {
+  display: flex;
+  gap: 6px;
+}
+
+.actionBtn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid #ebebeb;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  position: relative;
+}
+
+.actionBtn:hover {
+  border-color: #d0d0d0;
+  background: #fafafa;
+}
+
+.actionBtn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.notifDot {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #e55;
+  border: 1px solid #fff;
+}
+
+/* Stats */
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+/* Bottom */
+.bottomRow {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 12px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .sidebar { width: 52px; padding: 20px 8px; }
+  .logoText, .navItem span, .userName, .userRole { display: none; }
+  .logo { justify-content: center; padding: 0 0 20px; }
+  .navItem { justify-content: center; padding: 9px; }
+  .userChip { justify-content: center; }
+  .main { padding: 24px 20px 40px; }
+}
+
+@media (max-width: 768px) {
+  .root { flex-direction: column; }
+  .sidebar { width: 100%; min-height: auto; flex-direction: row; padding: 12px 16px; border-right: none; border-bottom: 1px solid #ebebeb; position: static; }
+  .logo { padding: 0; }
+  .logoText { display: block; }
+  .nav { flex-direction: row; flex: 1; overflow-x: auto; }
+  .navItem span { display: none; }
+  .sidebarFooter { padding: 0; border: none; }
+  .userRole, .userName { display: none; }
+  .statsRow, .bottomRow { grid-template-columns: 1fr; }
+  .main { padding: 20px 16px 40px; }
+}

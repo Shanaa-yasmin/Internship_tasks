@@ -1,0 +1,73 @@
+.card {
+  background: #fff;
+  border: 1px solid #ebebeb;
+  border-radius: 12px;
+  padding: 20px;
+  transition: border-color 0.2s;
+  cursor: default;
+}
+
+.card:hover {
+  border-color: #d0d0d0;
+}
+
+.topRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.iconWrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #f0efec;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconWrap svg {
+  width: 15px;
+  height: 15px;
+  stroke: #555;
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.badge {
+  font-size: 11px;
+  font-family: "Geist Mono", monospace;
+  font-weight: 500;
+  padding: 3px 7px;
+  border-radius: 5px;
+}
+
+.positive {
+  background: #eaf3de;
+  color: #3b6d11;
+}
+
+.negative {
+  background: #fcebeb;
+  color: #a32d2d;
+}
+
+.value {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  color: #1a1a1a;
+  line-height: 1;
+  margin-bottom: 5px;
+}
+
+.label {
+  font-size: 11px;
+  color: #aaa;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
