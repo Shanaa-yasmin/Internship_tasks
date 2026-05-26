@@ -1,0 +1,404 @@
+{
+  "info": {
+    "name": "E-Commerce API",
+    "description": "Complete Postman collection for the Django DRF E-Commerce Backend API.\n\nBase URL: http://127.0.0.1:8000\n\nAuth flow:\n1. Register → POST /api/auth/register/\n2. Login    → POST /api/auth/login/  (copy access token)\n3. Set Authorization header: Bearer <access_token>",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url",     "value": "http://127.0.0.1:8000" },
+    { "key": "access_token", "value": "" },
+    { "key": "category_id",  "value": "1" },
+    { "key": "product_id",   "value": "1" },
+    { "key": "cart_id",      "value": "1" }
+  ],
+  "item": [
+
+    {
+      "name": "🔐 Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/auth/register/",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"johndoe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"StrongPass123!\",\n  \"password2\": \"StrongPass123!\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login (get JWT)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.access) {",
+                  "  pm.collectionVariables.set('access_token', json.access);",
+                  "  console.log('Access token saved.');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/auth/login/",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"johndoe\",\n  \"password\": \"StrongPass123!\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/auth/refresh/",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"<your_refresh_token_here>\"\n}"
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "📁 Categories",
+      "item": [
+        {
+          "name": "List Categories",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/categories/?page=1&page_size=5",
+              "host": ["{{base_url}}"],
+              "path": ["api", "categories", ""],
+              "query": [
+                { "key": "page",      "value": "1" },
+                { "key": "page_size", "value": "5" },
+                { "key": "search",    "value": "",   "disabled": true },
+                { "key": "ordering",  "value": "name", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Category",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/categories/",
+            "header": [
+              { "key": "Content-Type",  "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Electronics\",\n  \"description\": \"Gadgets, smartphones, and accessories\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Category by ID",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/categories/{{category_id}}/"
+          }
+        },
+        {
+          "name": "Update Category",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/categories/{{category_id}}/",
+            "header": [
+              { "key": "Content-Type",  "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Electronics & Gadgets\",\n  \"description\": \"Updated description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Partial Update Category (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "url": "{{base_url}}/api/categories/{{category_id}}/",
+            "header": [
+              { "key": "Content-Type",  "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Only updating the description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Category",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/api/categories/{{category_id}}/",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }]
+          }
+        },
+        {
+          "name": "Category Stats (Aggregation)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/categories/stats/"
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "📦 Products",
+      "item": [
+        {
+          "name": "List Products (default)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/products/"
+          }
+        },
+        {
+          "name": "List Products — paginated",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/products/?page=1&page_size=5",
+              "host": ["{{base_url}}"],
+              "path": ["api", "products", ""],
+              "query": [
+                { "key": "page",      "value": "1" },
+                { "key": "page_size", "value": "5" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Products by name",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/products/?search=phone",
+              "host": ["{{base_url}}"],
+              "path": ["api", "products", ""],
+              "query": [{ "key": "search", "value": "phone" }]
+            }
+          }
+        },
+        {
+          "name": "Filter by Price Range",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/products/?min_price=100&max_price=1000",
+              "host": ["{{base_url}}"],
+              "path": ["api", "products", ""],
+              "query": [
+                { "key": "min_price", "value": "100" },
+                { "key": "max_price", "value": "1000" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filter by Category",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/products/?category=1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "products", ""],
+              "query": [{ "key": "category", "value": "1" }]
+            }
+          }
+        },
+        {
+          "name": "Combined Filter + Search + Pagination",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/products/?search=samsung&category=1&min_price=200&max_price=800&page=1&page_size=5&ordering=price",
+              "host": ["{{base_url}}"],
+              "path": ["api", "products", ""],
+              "query": [
+                { "key": "search",    "value": "samsung" },
+                { "key": "category",  "value": "1" },
+                { "key": "min_price", "value": "200" },
+                { "key": "max_price", "value": "800" },
+                { "key": "page",      "value": "1" },
+                { "key": "page_size", "value": "5" },
+                { "key": "ordering",  "value": "price" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Product",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/products/",
+            "header": [
+              { "key": "Content-Type",  "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Samsung Galaxy S24\",\n  \"description\": \"Latest flagship smartphone with 200MP camera\",\n  \"price\": \"799.99\",\n  \"category\": 1,\n  \"stock\": 50\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Product by ID",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/products/{{product_id}}/"
+          }
+        },
+        {
+          "name": "Update Product",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/products/{{product_id}}/",
+            "header": [
+              { "key": "Content-Type",  "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Samsung Galaxy S24 Ultra\",\n  \"description\": \"Premium flagship with titanium frame\",\n  \"price\": \"1199.99\",\n  \"category\": 1,\n  \"stock\": 30\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Product",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/api/products/{{product_id}}/",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }]
+          }
+        },
+        {
+          "name": "Product Stats (Aggregation)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/products/stats/"
+          }
+        },
+        {
+          "name": "Related Products",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/products/{{product_id}}/related/"
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "🛒 Cart",
+      "item": [
+        {
+          "name": "List My Carts",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/cart/",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }]
+          }
+        },
+        {
+          "name": "Create Cart",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/cart/",
+            "header": [
+              { "key": "Content-Type",  "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{}" }
+          }
+        },
+        {
+          "name": "Get Cart by ID",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/cart/{{cart_id}}/",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }]
+          }
+        },
+        {
+          "name": "Add Item to Cart",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/cart/add-item/",
+            "header": [
+              { "key": "Content-Type",  "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cart_id\": 1,\n  \"product_id\": 1,\n  \"quantity\": 2\n}"
+            }
+          }
+        },
+        {
+          "name": "Add Item (increment existing)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/cart/add-item/",
+            "header": [
+              { "key": "Content-Type",  "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cart_id\": 1,\n  \"product_id\": 1,\n  \"quantity\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Remove Item from Cart",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/cart/remove-item/",
+            "header": [
+              { "key": "Content-Type",  "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cart_id\": 1,\n  \"product_id\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Cart Total (Aggregation)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/cart/{{cart_id}}/total/",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }]
+          }
+        },
+        {
+          "name": "Delete Cart",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/api/cart/{{cart_id}}/",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }]
+          }
+        }
+      ]
+    }
+
+  ]
+}
