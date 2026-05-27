@@ -189,6 +189,13 @@ function ProductCard({ product, onAddToCart, isLoggedIn }) {
   const [hovered, setHovered] = useState(false);
 
   const fallback = `https://placehold.co/400x260/f3f4f6/9ca3af?text=${encodeURIComponent(product.name.slice(0, 14))}`;
+  const primaryImage =
+    product.image_url ||
+    product.images?.find((img) => img.is_primary)?.image_url ||
+    product.images?.[0]?.image_url ||
+    product.images?.[0]?.thumbnail_url ||
+    null;
+  const imageSrc = primaryImage || fallback;
 
   const handleAdd = async () => {
     if (!product.is_in_stock) return;
@@ -221,7 +228,7 @@ function ProductCard({ product, onAddToCart, isLoggedIn }) {
       {/* Image */}
       <div style={{ position: "relative", height: 210, overflow: "hidden", background: "#f9fafb" }}>
         <img
-          src={imgErr ? fallback : (product.image || fallback)}
+          src={imgErr ? fallback : imageSrc}
           alt={product.name}
           onError={() => setImgErr(true)}
           style={{
@@ -851,7 +858,7 @@ export default function App() {
       </div>
 
       {/* ── MAIN ── */}
-      <main style={{ maxWidth: 1320, margin: "0 auto", padding: "32px 24px 72px" }}>
+      <main style={{ width: "100%", padding: "32px 40px 72px" }}>
 
         {/* Controls bar */}
         <div style={{

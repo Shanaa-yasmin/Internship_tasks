@@ -42,6 +42,8 @@ class Product(models.Model):
     """
     name        = models.CharField(max_length=255)
     description = models.TextField()
+    # Optional main image for the product; uploaded files go to MEDIA_ROOT/products/
+    image       = models.ImageField(upload_to='products/', null=True, blank=True)
     price       = models.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -133,3 +135,31 @@ class CartItem(models.Model):
     @property
     def subtotal(self):
         return self.product.price * self.quantity
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ProductImage (existing table)
+# ─────────────────────────────────────────────────────────────────────────────
+class ProductImage(models.Model):
+    """Represents additional images for a product.
+
+    This model maps to an existing database table `api_productimage`. It's
+    declared with `managed = False` so Django won't try to create or alter
+    the table via migrations.
+    """
+    id = models.AutoField(primary_key=True)
+    image = models.CharField(max_length=1024)
+    thumbnail = models.CharField(max_length=1024, blank=True, null=True)
+    is_primary = models.BooleanField(default=False)
+    alt_text = models.CharField(max_length=255, blank=True, null=True)
+    order = models.IntegerField(default=0)
+    uploaded_at = models.DateTimeField()
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images', db_column='product_id')
+
+    class Meta:
+        db_table = 'api_productimage'
+        managed = False
+        ordering = ['order', '-uploaded_at']
+
+    def __str__(self):
+        return f"Image #{self.pk} for {self.product.name}"

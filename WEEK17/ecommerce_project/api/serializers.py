@@ -10,7 +10,8 @@ Includes:
 from decimal import Decimal
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Category, Product, Cart, CartItem
+from django.conf import settings
+from .models import Category, Product, Cart, CartItem, ProductImage
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -65,12 +66,15 @@ class ProductSerializer(serializers.ModelSerializer):
     """Full serializer — used for create / update."""
     category_name = serializers.CharField(source='category.name', read_only=True)
     is_in_stock   = serializers.BooleanField(read_only=True)
+    image_url     = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model  = Product
         fields = (
             'id', 'name', 'description', 'price',
             'category', 'category_name',
+            'image', 'image_url',
+            'images',
             'stock', 'is_in_stock',
             'created_at', 'updated_at',
         )
@@ -83,6 +87,52 @@ class ProductSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Price must be greater than 0.')
         return value
 
+    def get_image_url(self, obj):
+        request = self.context.get('request') if self.context else None
+        if not obj.image:
+            return None
+        try:
+            url = obj.image.url
+        except ValueError:
+            return None
+        if request:
+            return request.build_absolute_uri(url)
+        return url
+
+    # include additional images (if any)
+    images = serializers.SerializerMethodField(read_only=True)
+
+    def get_images(self, obj):
+        request = self.context.get('request') if self.context else None
+        images = []
+        for img in getattr(obj, 'images').all():
+            image_path = img.image
+            thumb_path = img.thumbnail
+            image_url = None
+            thumb_url = None
+            if image_path:
+                if request:
+                    image_url = request.build_absolute_uri(settings.MEDIA_URL + image_path)
+                else:
+                    image_url = settings.MEDIA_URL + image_path
+            if thumb_path:
+                if request:
+                    thumb_url = request.build_absolute_uri(settings.MEDIA_URL + thumb_path)
+                else:
+                    thumb_url = settings.MEDIA_URL + thumb_path
+            images.append({
+                'id': img.id,
+                'image': image_path,
+                'image_url': image_url,
+                'thumbnail': thumb_path,
+                'thumbnail_url': thumb_url,
+                'is_primary': img.is_primary,
+                'alt_text': img.alt_text,
+                'order': img.order,
+                'uploaded_at': img.uploaded_at,
+            })
+        return images
+
     def validate_stock(self, value):
         if value < 0:
             raise serializers.ValidationError('Stock cannot be negative.')
@@ -93,13 +143,59 @@ class ProductListSerializer(serializers.ModelSerializer):
     """Lightweight serializer for list endpoints (omits heavy description)."""
     category_name = serializers.CharField(source='category.name', read_only=True)
     is_in_stock   = serializers.BooleanField(read_only=True)
+    image_url     = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model  = Product
         fields = (
             'id', 'name', 'price', 'category', 'category_name',
-            'stock', 'is_in_stock', 'created_at',
+            'image', 'image_url', 'images', 'stock', 'is_in_stock', 'created_at',
         )
+
+    def get_image_url(self, obj):
+        request = self.context.get('request') if self.context else None
+        if not obj.image:
+            return None
+        try:
+            url = obj.image.url
+        except ValueError:
+            return None
+        if request:
+            return request.build_absolute_uri(url)
+        return url
+
+    images = serializers.SerializerMethodField(read_only=True)
+
+    def get_images(self, obj):
+        request = self.context.get('request') if self.context else None
+        images = []
+        for img in getattr(obj, 'images').all():
+            image_path = img.image
+            thumb_path = img.thumbnail
+            image_url = None
+            thumb_url = None
+            if image_path:
+                if request:
+                    image_url = request.build_absolute_uri(settings.MEDIA_URL + image_path)
+                else:
+                    image_url = settings.MEDIA_URL + image_path
+            if thumb_path:
+                if request:
+                    thumb_url = request.build_absolute_uri(settings.MEDIA_URL + thumb_path)
+                else:
+                    thumb_url = settings.MEDIA_URL + thumb_path
+            images.append({
+                'id': img.id,
+                'image': image_path,
+                'image_url': image_url,
+                'thumbnail': thumb_path,
+                'thumbnail_url': thumb_url,
+                'is_primary': img.is_primary,
+                'alt_text': img.alt_text,
+                'order': img.order,
+                'uploaded_at': img.uploaded_at,
+            })
+        return images
 
 
 # ─────────────────────────────────────────────────────────────────────────────

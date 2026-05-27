@@ -124,6 +124,10 @@ USE_TZ        = True
 STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Media files (user-uploaded)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # ─────────────────────────────────────────────
 # DJANGO REST FRAMEWORK
 # ─────────────────────────────────────────────
