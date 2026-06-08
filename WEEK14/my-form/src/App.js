@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 const STEPS = ["Personal", "Account", "Details"];
 
@@ -12,16 +12,22 @@ const initialForm = {
   parentPhone: "",
 };
 
+// Regex patterns
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+// Password: min 8 chars, 1 uppercase, 1 lowercase, 1 digit, 1 special char
+
 function validate(step, form) {
   const errors = {};
   if (step === 0) {
     if (!form.name.trim()) errors.name = "Name is required.";
   }
   if (step === 1) {
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
+    if (!EMAIL_REGEX.test(form.email))
       errors.email = "Enter a valid email address.";
-    if (form.password.length < 6)
-      errors.password = "Password must be at least 6 characters.";
+    if (!PASSWORD_REGEX.test(form.password))
+      errors.password =
+        "Min 8 chars with uppercase, lowercase, number & special character (@$!%*?&).";
   }
   if (step === 2) {
     if (!form.address.trim()) errors.address = "Address is required.";
@@ -89,13 +95,6 @@ export default function RegistrationForm() {
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
 
-  useEffect(() => {
-    const saved = localStorage.getItem("reg_form_data");
-    if (saved) {
-      try { setForm(JSON.parse(saved)); } catch {}
-    }
-  }, []);
-
   const set = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
 
   const handleNext = () => {
@@ -113,7 +112,13 @@ export default function RegistrationForm() {
   const handleSubmit = () => {
     const errs = validate(step, form);
     if (Object.keys(errs).length) { setErrors(errs); return; }
-    localStorage.setItem("reg_form_data", JSON.stringify(form));
+
+    // Append new submission to existing saved list
+    const existing = localStorage.getItem("reg_submissions");
+    const submissions = existing ? JSON.parse(existing) : [];
+    submissions.push({ ...form, submittedAt: new Date().toISOString() });
+    localStorage.setItem("reg_submissions", JSON.stringify(submissions));
+
     setSubmitted(true);
   };
 
@@ -122,10 +127,7 @@ export default function RegistrationForm() {
     setStep(0);
     setErrors({});
     setSubmitted(false);
-    localStorage.removeItem("reg_form_data");
   };
-
-  const progress = ((step) / (STEPS.length - 1)) * 100;
 
   if (submitted) {
     return (
@@ -202,7 +204,7 @@ export default function RegistrationForm() {
             {step === 1 && (
               <>
                 <Field label="Email" id="email" type="email" value={form.email} onChange={set("email")} error={errors.email} placeholder="jane@example.com" />
-                <Field label="Password" id="password" type="password" value={form.password} onChange={set("password")} error={errors.password} placeholder="Min. 6 characters" />
+                <Field label="Password" id="password" type="password" value={form.password} onChange={set("password")} error={errors.password} placeholder="Min 8 chars, upper+lower+number+symbol" />
               </>
             )}
             {step === 2 && (
