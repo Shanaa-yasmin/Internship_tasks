@@ -1,0 +1,524 @@
+{
+  "info": {
+    "name": "E-Commerce API — Week 11 Tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "BASE_URL", "value": "http://127.0.0.1:8000/api" },
+    { "key": "ACCESS_TOKEN", "value": "" },
+    { "key": "CART_ID", "value": "" },
+    { "key": "PRODUCT_ID", "value": "" },
+    { "key": "CATEGORY_ID", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "pm.test('Has user object', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('user');",
+                  "  pm.expect(body.user).to.have.property('id');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{BASE_URL}}/auth/register/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"postman_user\", \"email\": \"pm@test.com\", \"password\": \"testpass123\", \"password2\": \"testpass123\"}"
+            }
+          }
+        },
+        {
+          "name": "Login (get JWT)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has access token', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('access');",
+                  "  pm.collectionVariables.set('ACCESS_TOKEN', body.access);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{BASE_URL}}/auth/login/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"postman_user\", \"password\": \"testpass123\"}"
+            }
+          }
+        },
+        {
+          "name": "Register — Password Mismatch (negative)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400 on mismatch', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{BASE_URL}}/auth/register/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"bad_user\", \"email\": \"b@b.com\", \"password\": \"pass1234\", \"password2\": \"different\"}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "List Categories",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has results array', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('results');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{BASE_URL}}/categories/"
+          }
+        },
+        {
+          "name": "Create Category",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "pm.test('Category has id', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('id');",
+                  "  pm.collectionVariables.set('CATEGORY_ID', body.id);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+            ],
+            "url": "{{BASE_URL}}/categories/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"Postman Test Category\", \"description\": \"Created via Postman\"}"
+            }
+          }
+        },
+        {
+          "name": "Category Stats",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has summary and per_category', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('summary');",
+                  "  pm.expect(body).to.have.property('per_category');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{BASE_URL}}/categories/stats/"
+          }
+        },
+        {
+          "name": "Create Category — Unauthenticated (negative)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 401 without token', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{BASE_URL}}/categories/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"Should Fail\"}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "List Products",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has pagination', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('pagination');",
+                  "  pm.expect(body.pagination).to.have.property('total_items');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{BASE_URL}}/products/"
+          }
+        },
+        {
+          "name": "Create Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "pm.test('Product has id', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('id');",
+                  "  pm.collectionVariables.set('PRODUCT_ID', body.id);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+            ],
+            "url": "{{BASE_URL}}/products/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"Postman Product\", \"description\": \"Test product\", \"price\": \"99.99\", \"category\": {{CATEGORY_ID}}, \"stock\": 25}"
+            }
+          }
+        },
+        {
+          "name": "Get Product Detail",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Product has images array', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('images');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{BASE_URL}}/products/{{PRODUCT_ID}}/"
+          }
+        },
+        {
+          "name": "Product Stats",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has overall stats', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.overall).to.have.property('total_products');",
+                  "  pm.expect(body.overall).to.have.property('avg_price');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{BASE_URL}}/products/stats/"
+          }
+        },
+        {
+          "name": "Filter Products by Price",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('All results within price range', () => {",
+                  "  const results = pm.response.json().results;",
+                  "  results.forEach(p => {",
+                  "    pm.expect(parseFloat(p.price)).to.be.at.least(10);",
+                  "  });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/products/?min_price=10&max_price=500",
+              "query": [
+                { "key": "min_price", "value": "10" },
+                { "key": "max_price", "value": "500" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Product — Invalid Price (negative)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400 on zero price', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+            ],
+            "url": "{{BASE_URL}}/products/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"Bad\", \"description\": \"desc\", \"price\": \"0.00\", \"category\": {{CATEGORY_ID}}, \"stock\": 1}"
+            }
+          }
+        },
+        {
+          "name": "Related Products",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Is array', () => pm.expect(pm.response.json()).to.be.an('array'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{BASE_URL}}/products/{{PRODUCT_ID}}/related/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cart",
+      "item": [
+        {
+          "name": "Create Cart",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "pm.test('Cart has id', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('id');",
+                  "  pm.collectionVariables.set('CART_ID', body.id);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+            ],
+            "url": "{{BASE_URL}}/cart/",
+            "body": { "mode": "raw", "raw": "{}" }
+          }
+        },
+        {
+          "name": "Add Item to Cart",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has cart in response', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('cart');",
+                  "  pm.expect(body.cart.items.length).to.be.greaterThan(0);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+            ],
+            "url": "{{BASE_URL}}/cart/add-item/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"cart_id\": {{CART_ID}}, \"product_id\": {{PRODUCT_ID}}, \"quantity\": 2}"
+            }
+          }
+        },
+        {
+          "name": "Cart Total",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Total is numeric', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('grand_total');",
+                  "  pm.expect(parseFloat(body.grand_total)).to.be.at.least(0);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }],
+            "url": "{{BASE_URL}}/cart/{{CART_ID}}/total/"
+          }
+        },
+        {
+          "name": "Add Item — Exceeds Stock (negative)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400 on stock overflow', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+            ],
+            "url": "{{BASE_URL}}/cart/add-item/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"cart_id\": {{CART_ID}}, \"product_id\": {{PRODUCT_ID}}, \"quantity\": 99999}"
+            }
+          }
+        },
+        {
+          "name": "Remove Item from Cart",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Success message', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.message).to.include('removed');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }
+            ],
+            "url": "{{BASE_URL}}/cart/remove-item/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"cart_id\": {{CART_ID}}, \"product_id\": {{PRODUCT_ID}}}"
+            }
+          }
+        },
+        {
+          "name": "Cart — Unauthenticated (negative)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 401 without token', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{BASE_URL}}/cart/"
+          }
+        }
+      ]
+    }
+  ]
+}

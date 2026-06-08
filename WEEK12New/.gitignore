@@ -1,0 +1,25 @@
+# Environment variables — contains secrets, never commit
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Django
+*.log
+db.sqlite3
+/staticfiles/
+/mediafiles/
+
+# IDE
+.vscode/
+.idea/
+*.swp
