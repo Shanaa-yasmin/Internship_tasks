@@ -16,7 +16,7 @@ env/
 # Django
 *.log
 db.sqlite3
-/staticfiles/
+ecommerce_project/staticfiles/
 /static/
 /media/
 
